@@ -1,29 +1,32 @@
-#14501
+#14889
 import sys
 
 input = sys.stdin.readline
 
-N = int(input())
-T = []
-P = []
-for i in range(N) :
-  t, p = map(int, input().split())
-  # 상담이 불가능한 경우
-  # 등호 / -1 제거 가능성 따져보기
-  if i + t -1 >= N :
-    T.append(1)
-    P.append(0)
-  else : 
-    T.append(t)
-    P.append(p)
+def get_sum(arr) :
+  sum = 0
+  for i in arr :
+    for j in arr :
+      sum += S[i][j]
+  return sum 
 
-def get_max(i):
-  if i >= N :
-    return 0
-  elif T[i] == 1 :
-    return P[i] + get_max(i + 1)
-  else :
-    p1 = P[i] + get_max(i + T[i])
-    p2 = get_max(i + 1)
-    return max(p1, p2)
-print(get_max(0))
+
+def get_val(arr, val):
+  if len(arr) == N / 2:
+    other = list(set(range(N)) - set(arr))
+    
+    return (abs(get_sum(other) - val))
+  res = []
+  for i in range(arr[-1] + 1, int(N/2) + len(arr) + 1) :
+    val2 = val
+    for j in arr :
+      val2 = val2 + S[i][j] + S[j][i]
+    arr2 = arr + [i]
+    res.append(get_val(arr2, val2))
+  return min(res)
+
+
+N = int(input())
+S = [list(map(int, input().split())) for _ in range(N)]
+arr = [0]
+print(get_val(arr, 0))
