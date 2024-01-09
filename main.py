@@ -6,7 +6,6 @@ input = sys.stdin.readline
 
 def get_max(arr):
   max_val = 0
-  # arr 전체 탐색하며 max 값 리턴
   for i in range(N):
     for j in range(N):
       max_val = max(max_val, arr[i][j])
@@ -26,7 +25,6 @@ def get_add(arr):
         arr[i][j] *= 2
         del arr[i][j + 1]
       j += 1
-
     while len(arr[i]) < N:
       arr[i].append(0)
   return arr
@@ -59,8 +57,7 @@ def get_val(arr, i):
   res = []
   for d in range(4):
     arr2 = move(arr, d)
-    # if i == 0  and d == 3:
-    # print("i:", i , "d: ", d, arr2, "res", res)
+  
     res.append(get_val(arr2, i + 1))
   return max(res)
 
