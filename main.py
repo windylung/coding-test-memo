@@ -1,16 +1,29 @@
-#13458
+#14501
 import sys
-import math
 
 input = sys.stdin.readline
 
-n = int(input())
-student =list(map(int, input().split()))
-c1, c2 = map(int, input().split())
-res = 0
+N = int(input())
+T = []
+P = []
+for i in range(N) :
+  t, p = map(int, input().split())
+  # 상담이 불가능한 경우
+  # 등호 / -1 제거 가능성 따져보기
+  if i + t -1 >= N :
+    T.append(1)
+    P.append(0)
+  else : 
+    T.append(t)
+    P.append(p)
 
-for s in student :
-  c = math.ceil((s - c1) / c2)
-  res += c if c >= 0 else 0
-
-print(res + n)
+def get_max(i):
+  if i >= N :
+    return 0
+  elif T[i] == 1 :
+    return P[i] + get_max(i + 1)
+  else :
+    p1 = P[i] + get_max(i + T[i])
+    p2 = get_max(i + 1)
+    return max(p1, p2)
+print(get_max(0))
