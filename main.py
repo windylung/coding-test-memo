@@ -1,65 +1,58 @@
-#14889
+#14499
 import sys
 
 input = sys.stdin.readline
 
-
-def get_max(arr):
-  max_val = 0
-  for i in range(N):
-    for j in range(N):
-      max_val = max(max_val, arr[i][j])
-  return max_val
+N, M, i, j, d = map(int, input().split())
+S = [list(map(int, input().split())) for _ in range(N)]
+arr = list(map(int, input().split()))
+dice = [0, 0, 0, 0, 0, 0]
 
 
-N = int(input())
-arr = [list(map(int, input().split())) for _ in range(N)]
+def east(d):
+  return [d[5], d[1], d[4], d[3], d[0], d[2]]
 
 
-def get_add(arr):
-  for i in range(N):
-    arr[i] = [num for num in arr[i] if num != 0]
-    j = 0
-    while j < len(arr[i]) - 1:
-      if arr[i][j] == arr[i][j + 1]:
-        arr[i][j] *= 2
-        del arr[i][j + 1]
+def west(d):
+  return [d[4], d[1], d[5], d[3], d[2], d[0]]
+
+
+def north(d):
+  return [d[3]] + d[:3] + d[4:]
+
+
+def south(d):
+  result = d[1:]
+  result.insert(3, d[0])
+  return result
+
+
+for n in arr:
+  ic, jc = i, j
+
+  if n == 1:
+    if j + 1 < M:
       j += 1
-    while len(arr[i]) < N:
-      arr[i].append(0)
-  return arr
+      dice = east(dice)
 
+  elif n == 2:
+    if j - 1 >= 0:
+      j -= 1
+      dice = west(dice)
 
-def move(arr, d):
-  cp_arr = arr[:]
-  res = arr[:]
-  if d == 0:
-    res = get_add(cp_arr)
-  elif d == 1:
-    for i in range(N):
-      cp_arr[i] = cp_arr[i][::-1]
-    res = get_add(cp_arr)
-    for i in range(N):
-      res[i] = res[i][::-1]
-  elif d == 2:
-    arr2 = list(zip(*cp_arr))
-    res = list(zip(*get_add(arr2)))
+  elif n == 3:
+    if i - 1 >= 0:
+      i -= 1
+      dice = north(dice)
 
-  elif d == 3:
-    arr2 = list(zip(*cp_arr[::-1]))
-    res = list(zip(*get_add(arr2)))[::-1]
-  return res
+  elif i + 1 < N:
+    i += 1
+    dice = south(dice)
 
-
-def get_val(arr, i):
-  if (i == 5):
-    return get_max(arr)
-  res = []
-  for d in range(4):
-    arr2 = move(arr, d)
-  
-    res.append(get_val(arr2, i + 1))
-  return max(res)
-
-
-print(get_val(arr, 0))
+  if ic != i or jc != j:
+    if S[i][j] == 0 :
+      S[i][j] = dice[0]
+    else :
+      dice[0] = S[i][j]
+      S[i][j] = 0
+    print(dice[2])
