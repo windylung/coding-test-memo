@@ -1,58 +1,29 @@
-#14499
+#14500
 import sys
 
 input = sys.stdin.readline
 
-N, M, i, j, d = map(int, input().split())
+N, M =  map(int, input().split())
 S = [list(map(int, input().split())) for _ in range(N)]
-arr = list(map(int, input().split()))
-dice = [0, 0, 0, 0, 0, 0]
+res = 0
 
+def get_val(i, j, n, sum) :
+  if (n==4) :
+    return sum + S[i][j]
 
-def east(d):
-  return [d[5], d[1], d[4], d[3], d[0], d[2]]
+  sum += S[i][j] 
+  if i+1 >= N and j+1 >= M :
+    return -9999
+  elif i+1 >= N :
+    return get_val(i, j+1, n+1, sum)
+  elif j+1 >= M :
+    return get_val(i+1, j, n+1, sum)
+  else :
+    square = get_val(i+1, j+1, n+2, sum + S[i+1][j] + S[i][j])
+    return max(get_val(i+1, j, n+1, sum), get_val(i, j+1, n+1, sum), square)
 
-
-def west(d):
-  return [d[4], d[1], d[5], d[3], d[2], d[0]]
-
-
-def north(d):
-  return [d[3]] + d[:3] + d[4:]
-
-
-def south(d):
-  result = d[1:]
-  result.insert(3, d[0])
-  return result
-
-
-for n in arr:
-  ic, jc = i, j
-
-  if n == 1:
-    if j + 1 < M:
-      j += 1
-      dice = east(dice)
-
-  elif n == 2:
-    if j - 1 >= 0:
-      j -= 1
-      dice = west(dice)
-
-  elif n == 3:
-    if i - 1 >= 0:
-      i -= 1
-      dice = north(dice)
-
-  elif i + 1 < N:
-    i += 1
-    dice = south(dice)
-
-  if ic != i or jc != j:
-    if S[i][j] == 0 :
-      S[i][j] = dice[0]
-    else :
-      dice[0] = S[i][j]
-      S[i][j] = 0
-    print(dice[2])
+for i in range(N) :
+  for j in range(M) :
+    val = get_val(i, j, 1, 0)
+    res = max(res, val)
+print(res)
