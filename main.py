@@ -1,29 +1,56 @@
-#14500
-import sys
+N, M = map(int, input().split())
+i, j, d = map(int, input().split())
+arr = [list(map(int, input().split())) for _ in range(N)]
 
-input = sys.stdin.readline
 
-N, M =  map(int, input().split())
-S = [list(map(int, input().split())) for _ in range(N)]
-res = 0
+def move(i, j, d):
+  if d == 0:
+    i, j = i - 1, j
+  elif d == 3:
+    i, j = i, j - 1
+  elif d == 2:
+    i, j = i + 1, j
+  elif d == 1:
+    i, j = i, j + 1
+  return i, j
 
-def get_val(i, j, n, sum) :
-  if (n==4) :
-    return sum + S[i][j]
 
-  sum += S[i][j] 
-  if i+1 >= N and j+1 >= M :
-    return -9999
-  elif i+1 >= N :
-    return get_val(i, j+1, n+1, sum)
-  elif j+1 >= M :
-    return get_val(i+1, j, n+1, sum)
-  else :
-    square = get_val(i+1, j+1, n+2, sum + S[i+1][j] + S[i][j])
-    return max(get_val(i+1, j, n+1, sum), get_val(i, j+1, n+1, sum), square)
+def check_around(i, j, d):
+  #direction 한 바퀴 돌려야 함.
+  direction = [0, 3, 2, 1]
+  init_idx = direction.index(d)
+  idx = (init_idx + 1) % 4
+  while (init_idx != idx):
+    di, dj = move(i, j, direction[idx])  # 방향대로 이동한 좌표를 받음
+    if arr[di][dj] == 0:  # 이동 가능한 경우 -> 리턴
+      i, j = di, dj
+      return direction[idx]
+    idx = (idx + 1) % 4
 
-for i in range(N) :
-  for j in range(M) :
-    val = get_val(i, j, 1, 0)
-    res = max(res, val)
-print(res)
+  di, dj = move(i, j, direction[idx])  # 방향대로 이동한 좌표를 받음
+  if arr[di][dj] == 0:  # 이동 가능한 경우 -> 리턴
+    i, j = di, dj
+    return direction[idx]
+  return -1
+
+
+def clean(i, j, d):
+  res = 0
+  while (1):
+    if arr[i][j] == 0:
+      arr[i][j] = 2  # 청소 완료한 경우
+      res += 1
+    check_d = check_around(i, j, d)
+    if check_d != -1:  # 빈칸이 있는 경우 -> 해당 방향으로 전진
+      d = check_d
+      i, j = move(i, j, d)
+    else:  #빈칸이 없는 경우
+      di, dj = move(i, j, (d + 2) % 4)
+      if arr[di][dj] != 1:  #후진할 수 있는 경우
+        i, j, = di, dj
+      else:
+        print(res)
+        return
+
+
+clean(i, j, d)
