@@ -1,30 +1,30 @@
 import sys
 from collections import deque
 
-n = int(sys.stdin.readline())
-# 일단 한 줄 읽음
-input = [list(sys.stdin.readline()) for _ in range(n)]
+input = sys.stdin.readline
+N, M = map(int, input().split())
+data = [list(map(int, list(input().rstrip()))) for _ in range(N)]
+# 출발지에서 지나온 칸 개수
+dist = [[-1] * M for _ in range(N)]
+q = deque()
+q.append((0, 0))
+dist[0][0] = 1
 
-for i in range(n) :
-  arr = input[i]
-  q = deque()
-  for m in arr : 
-    if m == '(' :
-      q.append(m)
-    elif m == ')' :
-      if len(q) == 0 :
-        q.append(m)
-      else :
-        tmp = q.pop()
-        if tmp != '(' :
-          q.append(tmp)
-          q.append(m)
-        
-  if len(q) != 0 :
-    print("NO", end = "")
-  else :
-    print("YES", end = "")
+dr = [1, -1, 0, 0]
+dc = [0, 0, 1, -1]
 
-  if i != n - 1 :
-    print()
-    
+while (q):
+  i, j = q.popleft()
+  d = dist[i][j]
+
+  for n in range(4):
+    di = i + dr[n]
+    dj = j + dc[n]
+    if (di < N and di >= 0 and dj < M and dj >= 0):
+      # print("di dj", di, dj, data[di][dj], dist[di][dj])
+      if (data[di][dj] == 1 and dist[di][dj] == -1):
+        q.append((di, dj))
+        dist[di][dj] = d + 1
+        if (di == N - 1 and dj == M - 1):
+          print(d + 1)
+          break
